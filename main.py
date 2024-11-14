@@ -59,3 +59,7 @@ def convert_pauker_to_sqlite(input_file, output):
                 (id, batch_number, card_name, front_text, back_text, learned_timestamp)
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (card_id, batch_index, card_name, front_text, back_text, learned_timestamp))
+
+    # Commit the transaction and close the connection
+    conn.commit()
+    conn.close()
