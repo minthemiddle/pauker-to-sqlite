@@ -46,6 +46,7 @@ The script processes different types of information as follows:
 - **Back Text**: Extracted from the `<ReverseSide>` element and stored in the `back_text` column of the SQLite database.
 - **Learned Timestamp**: Extracted from the `LearnedTimestamp` attribute of the `<FrontSide>` element and stored in the `learned_timestamp` column of the SQLite database.
 - **Batch Number**: Each card is associated with a batch number, which is derived from its position within the XML structure.
+- **Font Info**: The font for front or back of a card is not being transformed (as of now)
 
 ## Troubleshooting
 

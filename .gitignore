@@ -1,0 +1,5 @@
+.aider*
+.env
+*.pau
+*.pau.gz
+*.sqlite
