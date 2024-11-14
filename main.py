@@ -109,11 +109,12 @@ def convert_pauker_to_sqlite(input_file, output):
                         if back_text_elem is not None:
                             back_text = back_text_elem.text or ''
 
-                    # Create card name
+                    # Create unique card identifier
+                    card_id = f'batch{batch_index}_card{card_index}'
                     card_name = f'card{card_index}'
 
                     # Log card details before insertion
-                    logger.debug(f"Card details - Batch: {batch_index}, Name: {card_name}")
+                    logger.debug(f"Card details - Batch: {batch_index}, ID: {card_id}, Name: {card_name}")
                     logger.debug(f"Front text: {front_text[:50]}...")
                     logger.debug(f"Back text: {back_text[:50]}...")
 
@@ -123,7 +124,7 @@ def convert_pauker_to_sqlite(input_file, output):
                             INSERT INTO cards 
                             (id, batch_number, card_name, front_text, back_text, learned_timestamp)
                             VALUES (?, ?, ?, ?, ?, ?)
-                        ''', (card_name, batch_index, card_name, front_text, back_text, learned_timestamp))
+                        ''', (card_id, batch_index, card_name, front_text, back_text, learned_timestamp))
                         total_cards += 1
                     except sqlite3.Error as sql_err:
                         logger.error(f"SQLite insertion error: {sql_err}")
