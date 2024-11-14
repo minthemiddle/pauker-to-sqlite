@@ -89,9 +89,6 @@ def convert_pauker_to_sqlite(input_file, output):
                 logger.debug(f"Cards in batch {batch_index}: {len(cards)}")
                 
                 for card_index, card in enumerate(cards, 1):
-                    # Generate unique ID
-                    card_id = str(uuid.uuid4())
-                    
                     # Extract front side details with logging
                     front_side = card.find('FrontSide')
                     front_text = ''
@@ -116,7 +113,7 @@ def convert_pauker_to_sqlite(input_file, output):
                     card_name = f'card{card_index}'
 
                     # Log card details before insertion
-                    logger.debug(f"Card details - ID: {card_id}, Batch: {batch_index}, Name: {card_name}")
+                    logger.debug(f"Card details - Batch: {batch_index}, Name: {card_name}")
                     logger.debug(f"Front text: {front_text[:50]}...")
                     logger.debug(f"Back text: {back_text[:50]}...")
 
@@ -126,7 +123,7 @@ def convert_pauker_to_sqlite(input_file, output):
                             INSERT INTO cards 
                             (id, batch_number, card_name, front_text, back_text, learned_timestamp)
                             VALUES (?, ?, ?, ?, ?, ?)
-                        ''', (card_id, batch_index, card_name, front_text, back_text, learned_timestamp))
+                        ''', (card_name, batch_index, card_name, front_text, back_text, learned_timestamp))
                         total_cards += 1
                     except sqlite3.Error as sql_err:
                         logger.error(f"SQLite insertion error: {sql_err}")
