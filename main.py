@@ -65,7 +65,6 @@ def convert_pauker_to_sqlite(input_file, output):
                 CREATE TABLE IF NOT EXISTS cards (
                     id TEXT PRIMARY KEY,
                     batch_number INTEGER,
-                    card_name TEXT,
                     front_text TEXT,
                     back_text TEXT,
                     learned_timestamp INTEGER
@@ -111,10 +110,9 @@ def convert_pauker_to_sqlite(input_file, output):
 
                     # Create unique card identifier
                     card_id = f'batch{batch_index}_card{card_index}'
-                    card_name = f'card{card_index}'
 
                     # Log card details before insertion
-                    logger.debug(f"Card details - Batch: {batch_index}, ID: {card_id}, Name: {card_name}")
+                    logger.debug(f"Card details - Batch: {batch_index}, ID: {card_id}")
                     logger.debug(f"Front text: {front_text[:50]}...")
                     logger.debug(f"Back text: {back_text[:50]}...")
 
@@ -122,9 +120,9 @@ def convert_pauker_to_sqlite(input_file, output):
                     try:
                         cursor.execute('''
                             INSERT INTO cards 
-                            (id, batch_number, card_name, front_text, back_text, learned_timestamp)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                        ''', (card_id, batch_index, card_name, front_text, back_text, learned_timestamp))
+                            (id, batch_number, front_text, back_text, learned_timestamp)
+                            VALUES (?, ?, ?, ?, ?)
+                        ''', (card_id, batch_index, front_text, back_text, learned_timestamp))
                         total_cards += 1
                     except sqlite3.Error as sql_err:
                         logger.error(f"SQLite insertion error: {sql_err}")
