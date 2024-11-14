@@ -60,9 +60,10 @@ def convert_pauker_to_sqlite(input_file, output):
             cursor = conn.cursor()
             logger.debug("SQLite connection established")
 
-            # Create table
+            # Drop table if it exists and recreate to ensure clean slate
+            cursor.execute('DROP TABLE IF EXISTS cards')
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS cards (
+                CREATE TABLE cards (
                     id TEXT PRIMARY KEY,
                     batch_number INTEGER,
                     front_text TEXT,
@@ -108,8 +109,8 @@ def convert_pauker_to_sqlite(input_file, output):
                         if back_text_elem is not None:
                             back_text = back_text_elem.text or ''
 
-                    # Create stable unique card identifier based on content
-                    card_id = f'card{hash(front_text + back_text)}'
+                    # Create simple sequential card identifier
+                    card_id = f'card{total_cards + 1}'
 
                     # Log card details before insertion
                     logger.debug(f"Card details - Batch: {batch_index}, ID: {card_id}")
