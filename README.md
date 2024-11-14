@@ -1,5 +1,7 @@
 # Pauker to SQLite Converter
 
+**About this project**: Convert Pauker flashcard files to an SQLite database for easier management and querying.
+
 This script converts Pauker flashcard files (`.pau.gz`) into an SQLite database, making it easier to manage and query flashcard data.
 
 ## Prerequisites
