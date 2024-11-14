@@ -31,6 +31,22 @@ Suppose you have a Pauker file named `my_flashcards.pau.gz` and you want to conv
 python main.py -i my_flashcards.pau.gz -o my_flashcards.sqlite
 ```
 
+## Changes to the Original Pauker File
+
+During the conversion process, the following changes are made to the original Pauker file:
+- **File Format**: The `.pau.gz` file is decompressed and parsed as an XML file.
+- **Data Structure**: The XML structure is traversed to extract relevant information, which is then stored in an SQLite database.
+- **Card IDs**: Each card is assigned a unique identifier (`id`) in the SQLite database.
+- **Learned Timestamp**: The `LearnedTimestamp` attribute from the Pauker file is preserved and stored in the SQLite database.
+
+## Processing Different Information
+
+The script processes different types of information as follows:
+- **Front Text**: Extracted from the `<FrontSide>` element and stored in the `front_text` column of the SQLite database.
+- **Back Text**: Extracted from the `<ReverseSide>` element and stored in the `back_text` column of the SQLite database.
+- **Learned Timestamp**: Extracted from the `LearnedTimestamp` attribute of the `<FrontSide>` element and stored in the `learned_timestamp` column of the SQLite database.
+- **Batch Number**: Each card is associated with a batch number, which is derived from its position within the XML structure.
+
 ## Troubleshooting
 
 - **Error: File not found**: Ensure the input file path is correct and the file exists.
