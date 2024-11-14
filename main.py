@@ -56,4 +56,6 @@ def convert_pauker_to_sqlite(input_file, output):
             # Insert into database
             cursor.execute('''
                 INSERT INTO cards 
-                (id, batch_number, card_name, front_text, back_
+                (id, batch_number, card_name, front_text, back_text, learned_timestamp)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (card_id, batch_index, card_name, front_text, back_text, learned_timestamp))
