@@ -108,8 +108,8 @@ def convert_pauker_to_sqlite(input_file, output):
                         if back_text_elem is not None:
                             back_text = back_text_elem.text or ''
 
-                    # Create unique card identifier across batches
-                    card_id = f'batch{batch_index}_card{card_index}'
+                    # Create stable unique card identifier based on content
+                    card_id = f'card{hash(front_text + back_text)}'
 
                     # Log card details before insertion
                     logger.debug(f"Card details - Batch: {batch_index}, ID: {card_id}")
