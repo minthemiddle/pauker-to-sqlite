@@ -148,3 +148,6 @@ def convert_pauker_to_sqlite(input_file, output):
         logger.error(f"Unexpected error converting Pauker file: {e}")
         logger.error(traceback.format_exc())
         raise
+
+if __name__ == '__main__':
+    convert_pauker_to_sqlite()
