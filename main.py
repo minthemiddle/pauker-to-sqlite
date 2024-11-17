@@ -141,10 +141,6 @@ def convert_pauker_to_sqlite(input_file, output, example):
 
             if example:
                 story = generate_example_story(conn, cards, batch_index)
-                # Write story to file as well for convenience
-                with open('example_story.txt', 'w', encoding='utf-8') as f:
-                    f.write(story)
-                logger.info("Also saved example story to: example_story.txt")
 
             # Commit the transaction and close the connection
             conn.commit()
