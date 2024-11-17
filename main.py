@@ -140,7 +140,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
                         logger.error(traceback.format_exc())
 
             if example:
-                story = generate_example_story(conn)
+                story = generate_example_story(conn, batch_index=1)  # Default to batch 1
                 if story is None:
                     logger.warning("Skipping example story generation due to missing API key")
 
