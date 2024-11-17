@@ -194,11 +194,19 @@ def generate_example_story(conn, cards, batch_index):
                 if back_text_elem is not None:
                     back_text = back_text_elem.text or ''
             
-            # Only add non-empty entries and separate front and back with a colon
+            # Only add non-empty entries, using comma to separate front and back, semicolon between entries
             if front_text or back_text:
-                vocab_list.append(f"{front_text}: {back_text}")
+                vocab_list.append(f"{front_text},{back_text}")
 
-    prompt = f"create a short exciting story that incorporates as many of these vocabulary words as possible. Make it a cloze story where the vocabulary words are hidden. Vocabulary list (word: translation):\n{chr(10).join(vocab_list)}"
+    prompt = f"""Create a short exciting story that incorporates as many of these vocabulary words as possible. 
+Make it a cloze story where the vocabulary words are hidden. 
+
+Vocabulary format: 
+- Each vocabulary entry is separated by a semicolon (;)
+- Within each entry, the word and its translation are separated by a comma (,)
+
+Vocabulary list:
+{';'.join(vocab_list)}"""
     
     response = client.chat.completions.create(
         model="gemini-1.5-flash",
