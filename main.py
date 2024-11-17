@@ -196,7 +196,7 @@ def generate_example_story(conn, cards, batch_index):
             if front_text or back_text:
                 vocab_list.append(f"{front_text},{back_text}")
 
-    prompt = f"""Create a short exciting story that incorporates as many of these vocabulary words as possible. 
+    prompt = f"""Create a short exciting story that incorporates as many of these vocabulary words as possible. Vocabs must appear in random order.
 Make it a consistent cloze story where the vocabulary words are hidden. 
 
 Vocabulary format: 
