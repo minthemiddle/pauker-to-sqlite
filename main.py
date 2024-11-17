@@ -225,6 +225,20 @@ Vocabulary list:
     conn.commit()
     
     # Generate static HTML
+    import html
+    import re
+
+    def process_cloze(match):
+        full_text = match.group(0)
+        try:
+            content, hint = full_text[1:-1].split('](')
+            escaped_content = html.escape(content)
+            escaped_hint = html.escape(hint)
+            return f'<span class="cloze" onclick="revealCloze(this)" data-original="{escaped_content}" title="{escaped_hint}">[…]</span>'
+        except ValueError:
+            # Fallback if split fails
+            return full_text
+
     html_template = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -232,6 +246,9 @@ Vocabulary list:
     <style>
         .cloze {{
             cursor: pointer;
+            background-color: #f0f0f0;
+            padding: 0 4px;
+            border-radius: 3px;
         }}
         
         html, body {{
@@ -239,6 +256,7 @@ Vocabulary list:
             max-width: 32rem;
             line-height: 1.5;
             padding: 1rem;
+            font-family: Arial, sans-serif;
         }}
 
         .revealed {{
@@ -265,7 +283,7 @@ Vocabulary list:
 </head>
 <body>
     <h1>Latest Example</h1>
-    <p>{story.replace('[', '<span class="cloze" onclick="revealCloze(this)" data-original="').replace('](', '" title="').replace(')', '">[…]</span>')}</p>
+    <p>{re.sub(r'\[.*?\]\(.*?\)', process_cloze, story)}</p>
 </body>
 </html>"""
 
