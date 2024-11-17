@@ -47,9 +47,10 @@
  </body>
  </html>
 
-} else {
-     echo "No examples found.";
- }
+ <?php
+     } else {
+         echo "No examples found.";
+     }
 
- $conn->close();
+     $conn->close();
  ?>
