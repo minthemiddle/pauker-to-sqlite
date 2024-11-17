@@ -197,11 +197,14 @@ def generate_example_story(conn, cards, batch_index):
                 vocab_list.append(f"{front_text},{back_text}")
 
     prompt = f"""Create a short exciting story that incorporates as many of these vocabulary words as possible. 
-Make it a cloze story where the vocabulary words are hidden. 
+Make it a consistent cloze story where the vocabulary words are hidden. 
 
 Vocabulary format: 
 - Each vocabulary entry is separated by a semicolon (;)
 - Within each entry, the word and its translation are separated by a comma (,)
+
+Cloze format:
+[CONTENT TO BE DISCLOSED]
 
 Vocabulary list:
 {';'.join(vocab_list)}"""
