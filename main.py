@@ -190,16 +190,16 @@ def generate_example_story(conn, batch_index):
         if front_text or back_text:
             vocab_list.append(f"{front_text},{back_text}")
 
-    prompt = f"""Create a short exciting story that incorporates as many of these vocabulary words as possible. Vocabs must appear in random order.
+    prompt = f"""Create a short exciting story that ALL of these vocabulary words as possible. Vocabs must appear in random order. No other words MUST be put as CLOZE but the provided vocabs.
 Make it a consistent cloze story where the vocabulary words are hidden. 
+Make sure that the story makes sense.
 
 Vocabulary format: 
 - Each vocabulary entry is separated by a semicolon (;)
 - Within each entry, the word and its translation are separated by a comma (,)
 
 Cloze format:
-[CONTENT TO BE DISCLOSED]
-Only the needed verb is put there, NOT the explanation.
+[Clozed content](super short and simple explanation/synonym of clozed content)
 
 Vocabulary list:
 {';'.join(vocab_list)}"""
