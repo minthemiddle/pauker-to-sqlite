@@ -50,8 +50,17 @@ if ($result) {
     </style>
     <script>
         function revealCloze(element) {
-            element.textContent = element.getAttribute('data-original');
-            element.classList.remove("cloze");
+            if (!element.getAttribute('data-revealed')) {
+                // First click: show first character
+                let original = element.getAttribute('data-original');
+                element.textContent = original.charAt(0) + '…';
+                element.setAttribute('data-revealed', 'partial');
+            } else if (element.getAttribute('data-revealed') === 'partial') {
+                // Second click: show full solution
+                element.textContent = element.getAttribute('data-original');
+                element.classList.remove("cloze");
+                element.setAttribute('data-revealed', 'full');
+            }
         }
     </script>
 </head>
