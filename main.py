@@ -269,11 +269,12 @@ Vocabulary list:
 </body>
 </html>"""
 
-    # Write static HTML
-    with open('index.html', 'w', encoding='utf-8') as f:
+    # Write static HTML using the example ID as the filename
+    html_filename = f"{example_id}.html"
+    with open(html_filename, 'w', encoding='utf-8') as f:
         f.write(html_template)
     
-    logger.info(f"Successfully created example story with ID: {example_id}")
+    logger.info(f"Successfully created example story with ID: {example_id} in {html_filename}")
     return story
 
 if __name__ == '__main__':
