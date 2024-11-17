@@ -63,8 +63,10 @@ def convert_pauker_to_sqlite(input_file, output, example):
             logger.debug("SQLite connection established")
 
             # Create tables if they don't exist
+            # Drop and recreate cards table to ensure fresh start
+            cursor.execute('DROP TABLE IF EXISTS cards')
             cursor.execute('''
-                CREATE TABLE IF NOT EXISTS cards (
+                CREATE TABLE cards (
                     id TEXT PRIMARY KEY,
                     batch_number INTEGER,
                     front_text TEXT,
