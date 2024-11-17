@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option('-i', '--input', 'input_file', type=click.Path(exists=True), required=True, help='Input Pauker .pau.gz file')
+@click.option('-o', '--output', 'output', type=click.Path(), required=True, help='Output SQLite database file')
 @click.option('--example', is_flag=True, help='Generate an example story using vocabulary from cards not in batch 1')
 def convert_pauker_to_sqlite(input_file, output, example):
     """
@@ -61,8 +62,9 @@ def convert_pauker_to_sqlite(input_file, output, example):
             cursor = conn.cursor()
             logger.debug("SQLite connection established")
 
-            # Drop table if it exists and recreate to ensure clean slate
+            # Drop tables if they exist and recreate to ensure clean slate
             cursor.execute('DROP TABLE IF EXISTS cards')
+            cursor.execute('DROP TABLE IF EXISTS examples')
             cursor.execute('''
                 CREATE TABLE cards (
                     id TEXT PRIMARY KEY,
@@ -72,7 +74,14 @@ def convert_pauker_to_sqlite(input_file, output, example):
                     learned_timestamp INTEGER
                 )
             ''')
-            logger.debug("Cards table created")
+            cursor.execute('''
+                CREATE TABLE examples (
+                    id TEXT PRIMARY KEY,
+                    date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    body TEXT
+                )
+            ''')
+            logger.debug("Cards and Examples tables created")
 
             # Track number of cards processed
             total_cards = 0
@@ -131,14 +140,18 @@ def convert_pauker_to_sqlite(input_file, output, example):
                         logger.error(traceback.format_exc())
 
             if example:
-                generate_example_story(cards, batch_index)
-            else:
-                # Commit the transaction and close the connection
-                conn.commit()
-                conn.close()
-                logger.info(f"Successfully created SQLite database: {output}")
-                logger.info(f"Total batches processed: {total_batches}")
-                logger.info(f"Total cards processed: {total_cards}")
+                story = generate_example_story(conn, cards, batch_index)
+                # Write story to file as well for convenience
+                with open('example_story.txt', 'w', encoding='utf-8') as f:
+                    f.write(story)
+                logger.info("Also saved example story to: example_story.txt")
+
+            # Commit the transaction and close the connection
+            conn.commit()
+            conn.close()
+            logger.info(f"Successfully created SQLite database: {output}")
+            logger.info(f"Total batches processed: {total_batches}")
+            logger.info(f"Total cards processed: {total_cards}")
 
         except sqlite3.Error as db_err:
             logger.error(f"SQLite database error: {db_err}")
@@ -150,7 +163,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
         logger.error(traceback.format_exc())
         raise
 
-def generate_example_story(cards, batch_index):
+def generate_example_story(conn, cards, batch_index):
     client = OpenAI(
         api_key="gemini_api_key",
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
@@ -179,9 +192,18 @@ def generate_example_story(cards, batch_index):
     )
 
     story = response.choices[0].message.content
-    with open('example_story.txt', 'w', encoding='utf-8') as f:
-        f.write(story)
-    logger.info("Successfully created example story: example_story.txt")
+    
+    # Insert story into examples table
+    cursor = conn.cursor()
+    example_id = str(uuid.uuid4())
+    cursor.execute('''
+        INSERT INTO examples (id, body)
+        VALUES (?, ?)
+    ''', (example_id, story))
+    conn.commit()
+    
+    logger.info(f"Successfully created example story with ID: {example_id}")
+    return story
 
 if __name__ == '__main__':
     convert_pauker_to_sqlite()
