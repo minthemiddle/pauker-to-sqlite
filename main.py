@@ -6,6 +6,7 @@ import uuid
 import os
 import logging
 import traceback
+from openai import OpenAI
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,7 +15,8 @@ logger = logging.getLogger(__name__)
 @click.command()
 @click.option('-i', '--input', 'input_file', type=click.Path(exists=True), required=True, help='Input Pauker .pau.gz file')
 @click.option('-o', '--output', default='pauker_cards.sqlite', help='Output SQLite database filename')
-def convert_pauker_to_sqlite(input_file, output):
+@click.option('--example', is_flag=True, help='Generate an example story using vocabulary from cards not in batch 1')
+def convert_pauker_to_sqlite(input_file, output, example):
     """
     Convert Pauker .pau.gz flashcard file to SQLite database
     """
@@ -129,12 +131,15 @@ def convert_pauker_to_sqlite(input_file, output):
                         logger.error(f"SQLite insertion error: {sql_err}")
                         logger.error(traceback.format_exc())
 
-            # Commit the transaction and close the connection
-            conn.commit()
-            conn.close()
-            logger.info(f"Successfully created SQLite database: {output}")
-            logger.info(f"Total batches processed: {total_batches}")
-            logger.info(f"Total cards processed: {total_cards}")
+            if example:
+                generate_example_story(cards, batch_index)
+            else:
+                # Commit the transaction and close the connection
+                conn.commit()
+                conn.close()
+                logger.info(f"Successfully created SQLite database: {output}")
+                logger.info(f"Total batches processed: {total_batches}")
+                logger.info(f"Total cards processed: {total_cards}")
 
         except sqlite3.Error as db_err:
             logger.error(f"SQLite database error: {db_err}")
@@ -145,6 +150,39 @@ def convert_pauker_to_sqlite(input_file, output):
         logger.error(f"Unexpected error converting Pauker file: {e}")
         logger.error(traceback.format_exc())
         raise
+
+def generate_example_story(cards, batch_index):
+    client = OpenAI(
+        api_key="gemini_api_key",
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+    )
+
+    vocab_list = []
+    for card_index, card in enumerate(cards, 1):
+        if batch_index != 1:
+            front_side = card.find('FrontSide')
+            front_text = ''
+            if front_side is not None:
+                front_text_elem = front_side.find('Text')
+                if front_text_elem is not None:
+                    front_text = front_text_elem.text or ''
+            vocab_list.append(front_text)
+
+    prompt = f"create a short exciting story that has as many of these vocabulary in it. make it a clozed capture story where the vocabs are being hidden. Vocabulary: {', '.join(vocab_list)}"
+    
+    response = client.chat.completions.create(
+        model="gemini-1.5-flash",
+        n=1,
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    story = response.choices[0].message.content
+    with open('example_story.txt', 'w', encoding='utf-8') as f:
+        f.write(story)
+    logger.info("Successfully created example story: example_story.txt")
 
 if __name__ == '__main__':
     convert_pauker_to_sqlite()
