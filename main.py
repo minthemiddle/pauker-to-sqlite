@@ -265,20 +265,55 @@ Vocabulary list:
         }}
     </style>
     <script>
-        function revealCloze(element) {{
-            if (!element.getAttribute('data-revealed')) {{
-                // First click: show first character
+        let clozeElements = [];
+        let currentClozeIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            clozeElements = Array.from(document.querySelectorAll('.cloze'));
+            
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    revealNextCloze();
+                }
+            });
+        });
+
+        function revealNextCloze() {
+            if (clozeElements.length === 0) return;
+
+            let currentElement = clozeElements[currentClozeIndex];
+            let original = currentElement.getAttribute('data-original');
+
+            if (!currentElement.getAttribute('data-revealed')) {
+                // First interaction: show first character
+                currentElement.textContent = original.charAt(0) + '…';
+                currentElement.setAttribute('data-revealed', 'partial');
+            } else if (currentElement.getAttribute('data-revealed') === 'partial') {
+                // Second interaction: show full solution
+                currentElement.textContent = original;
+                currentElement.classList.remove("cloze");
+                currentElement.classList.add("revealed");
+                currentElement.setAttribute('data-revealed', 'full');
+                // Move to next cloze
+                currentClozeIndex = (currentClozeIndex + 1) % clozeElements.length;
+                revealNextCloze();
+            }
+        }
+
+        function revealCloze(element) {
+            // Maintain existing click behavior
+            if (!element.getAttribute('data-revealed')) {
                 let original = element.getAttribute('data-original');
                 element.textContent = original.charAt(0) + '…';
                 element.setAttribute('data-revealed', 'partial');
-            }} else if (element.getAttribute('data-revealed') === 'partial') {{
-                // Second click: show full solution
+            } else if (element.getAttribute('data-revealed') === 'partial') {
                 element.textContent = element.getAttribute('data-original');
                 element.classList.remove("cloze");
                 element.classList.add("revealed");
                 element.setAttribute('data-revealed', 'full');
-            }}
-        }}
+            }
+        }
     </script>
 </head>
 <body>
