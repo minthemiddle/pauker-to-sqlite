@@ -141,6 +141,9 @@ def convert_pauker_to_sqlite(input_file, output, example):
 
             if example:
                 story = generate_example_story(conn, cards, batch_index)
+                if story is None:
+                    logger.warning("Skipping example story generation due to missing API key")
+                    continue
 
             # Commit the transaction and close the connection
             conn.commit()
@@ -159,9 +162,16 @@ def convert_pauker_to_sqlite(input_file, output, example):
         logger.error(traceback.format_exc())
         raise
 
+import os
+
 def generate_example_story(conn, cards, batch_index):
+    api_key = os.environ.get('GEMINI_API_KEY')
+    if not api_key:
+        logger.error("GEMINI_API_KEY environment variable not set")
+        return None
+
     client = OpenAI(
-        api_key="gemini_api_key",
+        api_key=api_key,
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
     )
 
