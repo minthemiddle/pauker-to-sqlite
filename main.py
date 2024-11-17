@@ -224,6 +224,55 @@ Vocabulary list:
     ''', (example_id, story))
     conn.commit()
     
+    # Generate static HTML
+    html_template = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloze Text Example</title>
+    <style>
+        .cloze {{
+            cursor: pointer;
+        }}
+        
+        html, body {{
+            font-size: 21px;
+            max-width: 32rem;
+            line-height: 1.5;
+            padding: 1rem;
+        }}
+
+        .revealed {{
+            font-style: italic;
+            color: #666;
+        }}
+    </style>
+    <script>
+        function revealCloze(element) {{
+            if (!element.getAttribute('data-revealed')) {{
+                // First click: show first character
+                let original = element.getAttribute('data-original');
+                element.textContent = original.charAt(0) + '…';
+                element.setAttribute('data-revealed', 'partial');
+            }} else if (element.getAttribute('data-revealed') === 'partial') {{
+                // Second click: show full solution
+                element.textContent = element.getAttribute('data-original');
+                element.classList.remove("cloze");
+                element.classList.add("revealed");
+                element.setAttribute('data-revealed', 'full');
+            }}
+        }}
+    </script>
+</head>
+<body>
+    <h1>Latest Example</h1>
+    <p>{story.replace('[', '<span class="cloze" onclick="revealCloze(this)" data-original="').replace('](', '" title="').replace(')', '">[…]</span>')}</p>
+</body>
+</html>"""
+
+    # Write static HTML
+    with open('index.html', 'w', encoding='utf-8') as f:
+        f.write(html_template)
+    
     logger.info(f"Successfully created example story with ID: {example_id}")
     return story
 
