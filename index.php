@@ -47,6 +47,11 @@ if ($result) {
             line-height: 1.5;
             padding: 1rem;
         }
+
+        .revealed {
+            font-style: italic;
+            color: #666;
+        }
     </style>
     <script>
         function revealCloze(element) {
@@ -59,6 +64,7 @@ if ($result) {
                 // Second click: show full solution
                 element.textContent = element.getAttribute('data-original');
                 element.classList.remove("cloze");
+                element.classList.add("revealed");
                 element.setAttribute('data-revealed', 'full');
             }
         }
