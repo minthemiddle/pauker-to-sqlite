@@ -21,7 +21,7 @@ if ($result) {
         $body = $row["body"];
 
         // Replace cloze text with hidden spans
-        $body = preg_replace('/\[(.*?)\]/', '<span class="cloze" onclick="revealCloze(this)">$1</span>', $body);
+        $body = preg_replace('/\[(.*?)\]/', '<span class="cloze" onclick="revealCloze(this)" data-original="$1">[…]</span>', $body);
     } else {
         $body = "No examples found.";
     }
@@ -34,15 +34,13 @@ if ($result) {
     <title>Cloze Text Example</title>
     <style>
         .cloze {
-            background-color: #ccc;
-            padding: 2px 4px;
             cursor: pointer;
         }
     </style>
     <script>
         function revealCloze(element) {
+            element.textContent = element.getAttribute('data-original');
             element.classList.remove("cloze");
-            element.style.backgroundColor = "transparent";
         }
     </script>
 </head>
