@@ -180,7 +180,7 @@ def generate_example_story(conn, batch_index):
         SELECT front_text, back_text 
         FROM cards 
         WHERE batch_number != 1 
-        ORDER BY learned_timestamp ASC 
+        ORDER BY random()
         LIMIT 15
     ''')
     
@@ -205,7 +205,7 @@ Vocabulary list:
 {';'.join(vocab_list)}"""
     
     response = client.chat.completions.create(
-        model="gemini-1.5-flash",
+        model="gemini-1.5-pro",
         n=1,
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
@@ -239,31 +239,7 @@ Vocabulary list:
             # Fallback if split fails
             return full_text
 
-    html_template = f"""<!DOCTYPE html>
-<html>
-<head>
-    <title>Cloze Text Example</title>
-    <style>
-        .cloze {{
-            cursor: pointer;
-            background-color: #f0f0f0;
-            padding: 0 4px;
-            border-radius: 3px;
-        }}
-        
-        html, body {{
-            font-size: 21px;
-            max-width: 32rem;
-            line-height: 1.5;
-            padding: 1rem;
-            font-family: Arial, sans-serif;
-        }}
-
-        .revealed {{
-            font-style: italic;
-            color: #666;
-        }}
-    </style>
+    script_content = """
     <script>
         let clozeElements = [];
         let currentClozeIndex = 0;
@@ -315,6 +291,34 @@ Vocabulary list:
             }
         }
     </script>
+"""
+
+    html_template = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloze Text Example</title>
+    <style>
+        .cloze {{
+            cursor: pointer;
+            background-color: #f0f0f0;
+            padding: 0 4px;
+            border-radius: 3px;
+        }}
+        
+        html, body {{
+            font-size: 21px;
+            max-width: 32rem;
+            line-height: 1.5;
+            padding: 1rem;
+            font-family: Arial, sans-serif;
+        }}
+
+        .revealed {{
+            font-style: italic;
+            color: #666;
+        }}
+    </style>
+{script_content}
 </head>
 <body>
     <h1>Latest Example</h1>
@@ -322,8 +326,11 @@ Vocabulary list:
 </body>
 </html>"""
 
+    # Ensure the out/ directory exists
+    os.makedirs('out', exist_ok=True)
+    
     # Write static HTML using the example ID as the filename
-    html_filename = f"{example_id}.html"
+    html_filename = f"out/{example_id.split('-')[0]}.html"
     with open(html_filename, 'w', encoding='utf-8') as f:
         f.write(html_template)
     
