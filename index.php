@@ -19,8 +19,8 @@
      if ($row) {
          $body = $row["body"];
 
-     // Replace cloze text with hidden spans
-     $body = preg_replace('/\[(.*?)\]/', '<span class="cloze" onclick="revealCloze(this)">$1</span>', $body);
+         // Replace cloze text with hidden spans
+         $body = preg_replace('/\[(.*?)\]/', '<span class="cloze" onclick="revealCloze(this)">$1</span>', $body);
  ?>
 
  <!DOCTYPE html>
