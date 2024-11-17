@@ -1,25 +1,23 @@
 <?php
- // Database connection details
- $servername = "localhost";
- $username = "your_username";
- $password = "your_password";
- $dbname = "out";
+ // SQLite database file
+ $sqliteFile = "out.sqlite";
 
  // Create connection
- $conn = new mysqli($servername, $username, $password, $dbname);
+ $conn = new SQLite3($sqliteFile);
 
  // Check connection
- if ($conn->connect_error) {
-     die("Connection failed: " . $conn->connect_error);
+ if (!$conn) {
+     die("Connection failed: " . $conn->lastErrorMsg());
  }
 
  // Query to get the latest example
  $sql = "SELECT body FROM examples ORDER BY id DESC LIMIT 1";
  $result = $conn->query($sql);
 
- if ($result->num_rows > 0) {
-     $row = $result->fetch_assoc();
-     $body = $row["body"];
+ if ($result) {
+     $row = $result->fetchArray(SQLITE3_ASSOC);
+     if ($row) {
+         $body = $row["body"];
 
      // Replace cloze text with hidden spans
      $body = preg_replace('/\[(.*?)\]/', '<span class="cloze" onclick="revealCloze(this)">$1</span>', $body);
