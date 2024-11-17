@@ -140,10 +140,9 @@ def convert_pauker_to_sqlite(input_file, output, example):
                         logger.error(traceback.format_exc())
 
             if example:
-                story = generate_example_story(conn, cards, batch_index)
+                story = generate_example_story(conn)
                 if story is None:
                     logger.warning("Skipping example story generation due to missing API key")
-                    # Remove the continue statement
 
             # Commit the transaction and close the connection
             conn.commit()
@@ -164,7 +163,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
 
 import os
 
-def generate_example_story(conn, cards, batch_index):
+def generate_example_story(conn, batch_index):
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable not set")
@@ -175,28 +174,21 @@ def generate_example_story(conn, cards, batch_index):
         base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
     )
 
+    # Query database for cards not in batch 1, sorted by learned_timestamp
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT front_text, back_text 
+        FROM cards 
+        WHERE batch_number != 1 
+        ORDER BY learned_timestamp ASC 
+        LIMIT 15
+    ''')
+    
     vocab_list = []
-    for card_index, card in enumerate(cards, 1):
-        if batch_index != 1:
-            front_side = card.find('FrontSide')
-            back_side = card.find('ReverseSide')
-            
-            front_text = ''
-            back_text = ''
-            
-            if front_side is not None:
-                front_text_elem = front_side.find('Text')
-                if front_text_elem is not None:
-                    front_text = front_text_elem.text or ''
-            
-            if back_side is not None:
-                back_text_elem = back_side.find('Text')
-                if back_text_elem is not None:
-                    back_text = back_text_elem.text or ''
-            
-            # Only add non-empty entries, using comma to separate front and back, semicolon between entries
-            if front_text or back_text:
-                vocab_list.append(f"{front_text},{back_text}")
+    for front_text, back_text in cursor.fetchall():
+        # Only add non-empty entries
+        if front_text or back_text:
+            vocab_list.append(f"{front_text},{back_text}")
 
     prompt = f"""Create a short exciting story that incorporates as many of these vocabulary words as possible. Vocabs must appear in random order.
 Make it a consistent cloze story where the vocabulary words are hidden. 
