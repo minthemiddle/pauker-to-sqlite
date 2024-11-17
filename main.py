@@ -143,7 +143,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
                 story = generate_example_story(conn, cards, batch_index)
                 if story is None:
                     logger.warning("Skipping example story generation due to missing API key")
-                    continue
+                    # Remove the continue statement
 
             # Commit the transaction and close the connection
             conn.commit()
