@@ -21,7 +21,11 @@ if ($result) {
         $body = $row["body"];
 
         // Replace cloze text with hidden spans
-        $body = preg_replace('/\[(.*?)\]/', '<span class="cloze" onclick="revealCloze(this)" data-original="$1">[…]</span>', $body);
+        $body = preg_replace(
+            "/\[(.*?)\]/",
+            '<span class="cloze" onclick="revealCloze(this)" data-original="$1">[…]</span>',
+            $body
+        );
     } else {
         $body = "No examples found.";
     }
@@ -35,6 +39,13 @@ if ($result) {
     <style>
         .cloze {
             cursor: pointer;
+        }
+        
+        html, body {
+            font-size: 21px;
+            max-width: 32rem;
+            line-height: 1.5;
+            padding: 1rem;
         }
     </style>
     <script>
@@ -50,6 +61,5 @@ if ($result) {
 </body>
 </html>
 
-<?php
-$conn->close();
+<?php $conn->close();
 ?>
