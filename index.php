@@ -47,8 +47,7 @@
  </body>
  </html>
 
- <?php
- } else {
+} else {
      echo "No examples found.";
  }
 
