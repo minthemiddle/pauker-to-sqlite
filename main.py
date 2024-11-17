@@ -179,14 +179,26 @@ def generate_example_story(conn, cards, batch_index):
     for card_index, card in enumerate(cards, 1):
         if batch_index != 1:
             front_side = card.find('FrontSide')
+            back_side = card.find('ReverseSide')
+            
             front_text = ''
+            back_text = ''
+            
             if front_side is not None:
                 front_text_elem = front_side.find('Text')
                 if front_text_elem is not None:
                     front_text = front_text_elem.text or ''
-            vocab_list.append(front_text)
+            
+            if back_side is not None:
+                back_text_elem = back_side.find('Text')
+                if back_text_elem is not None:
+                    back_text = back_text_elem.text or ''
+            
+            # Only add non-empty entries and separate front and back with a colon
+            if front_text or back_text:
+                vocab_list.append(f"{front_text}: {back_text}")
 
-    prompt = f"create a short exciting story that has as many of these vocabulary in it. make it a clozed capture story where the vocabs are being hidden. Vocabulary: {', '.join(vocab_list)}"
+    prompt = f"create a short exciting story that incorporates as many of these vocabulary words as possible. Make it a cloze story where the vocabulary words are hidden. Vocabulary list (word: translation):\n{chr(10).join(vocab_list)}"
     
     response = client.chat.completions.create(
         model="gemini-1.5-flash",
