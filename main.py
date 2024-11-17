@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option('-i', '--input', 'input_file', type=click.Path(exists=True), required=True, help='Input Pauker .pau.gz file')
-@click.option('-o', '--output', default='pauker_cards.sqlite', help='Output SQLite database filename')
 @click.option('--example', is_flag=True, help='Generate an example story using vocabulary from cards not in batch 1')
 def convert_pauker_to_sqlite(input_file, output, example):
     """
