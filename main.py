@@ -207,6 +207,7 @@ Vocabulary format:
 
 Cloze format:
 [CONTENT TO BE DISCLOSED]
+Only the needed verb is put there, NOT the explanation.
 
 Vocabulary list:
 {';'.join(vocab_list)}"""
