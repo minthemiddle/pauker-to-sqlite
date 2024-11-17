@@ -11,7 +11,7 @@ if (!$conn) {
 }
 
 // Query to get the latest example
-$sql = "SELECT body FROM examples ORDER BY id DESC LIMIT 1";
+$sql = "SELECT body FROM examples ORDER BY date DESC LIMIT 1";
 $result = $conn->query($sql);
 
 $body = "";
