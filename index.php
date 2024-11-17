@@ -22,8 +22,8 @@ if ($result) {
 
         // Replace cloze text with hidden spans
         $body = preg_replace(
-            "/\[(.*?)\]/",
-            '<span class="cloze" onclick="revealCloze(this)" data-original="$1">[…]</span>',
+            "/\[([^\]]+)\]\(([^\)]+)\)/",
+            '<span class="cloze" onclick="revealCloze(this)" data-original="$1" title="$2">[…]</span>',
             $body
         );
     } else {
