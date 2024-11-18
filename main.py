@@ -190,19 +190,40 @@ def generate_example_story(conn, batch_index):
         if front_text or back_text:
             vocab_list.append(f"{front_text},{back_text}")
 
-    prompt = f"""Create a short exciting story that ALL of these vocabulary words as possible. Vocabs must appear in random order. No other words MUST be put as CLOZE but the provided vocabs.
-Make it a consistent cloze story where the vocabulary words are hidden. 
-Make sure that the story makes sense.
+    prompt = f"""
+Create a natural dialogue between two people (A and B) following these strict rules:
+    
+1. Cloze Format Rules:
+- Each vocabulary item (word or phrase) MUST be converted to a cloze using exactly this format: [vocabulary item](brief definition)
+- Example: [chip on his shoulder](resentful attitude) or [take into account](consider)  
+- The cloze replacement happens in code!
+- Only the provided vocabulary items should be clozes
+- Each cloze definition must be 1-4 words maximum
+- Keep the original form of the vocabulary item exactly as provided
 
-Vocabulary format: 
-- Each vocabulary entry is separated by a semicolon (;)
-- Within each entry, the word and its translation are separated by a comma (,)
+2. Dialogue Requirements:
+- Begin each line with 'A:' or 'B:'
+- Keep the conversation natural and logical
+- Use ALL provided vocabulary items exactly once
+- Distribute vocabulary items randomly throughout the dialogue
+- IMPORTANT: Create entirely new contexts and sentences - DO NOT copy or adapt any example sentences from the input
+- Each vocabulary item must be used in a completely different context than shown in any example
 
-Cloze format:
-[Clozed content](super short and simple explanation/synonym of clozed content)
+3. Example Format:
+A: He has a [chip on his shoulder](resentful attitude) about not getting that promotion.
+B: Yes, but he needs to [take into account](consider) that he's still quite new.
 
-Vocabulary list:
-{';'.join(vocab_list)}"""
+4. Input Vocabulary Format:
+- Items are provided in format: phrase/word,definition;phrase/word,definition
+- Use the provided items but create your own brief definitions for the clozes
+
+For your example about "heyday":
+INSTEAD OF: "Progressive Rock had its heyday in the 1970s"
+CREATE NEW CONTEXT: "The local diner is experiencing its [heyday](peak period) with the new management"
+
+Please create a dialogue that follows these rules exactly using these vocabulary items:
+{';'.join(vocab_list)}
+"""
     
     response = client.chat.completions.create(
         model="gemini-1.5-pro",
