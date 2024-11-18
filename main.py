@@ -215,6 +215,7 @@ B: Yes, but he needs to [take into account](consider) that he's still quite new.
 
 4. Input Vocabulary Format:
 - Items are provided in format: phrase/word,definition;phrase/word,definition
+- Example: "Progressive Rock had its [h…] in the 1970s.","heyday"
 - Use the provided items but create your own brief definitions for the clozes
 
 For your example about "heyday":
