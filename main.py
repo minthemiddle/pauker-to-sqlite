@@ -7,6 +7,7 @@ import os
 import logging
 import traceback
 from openai import OpenAI
+import os  # Ensure this is imported
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -164,6 +165,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
 import os
 
 def generate_example_story(conn, batch_index):
+    # Ensure os is imported at the top of the file
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
         logger.error("GEMINI_API_KEY environment variable not set")
