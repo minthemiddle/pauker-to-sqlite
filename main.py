@@ -109,7 +109,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
                     if front_side is not None:
                         front_text_elem = front_side.find('Text')
                         if front_text_elem is not None:
-                            front_text = front_text_elem.text or ''
+                            front_text = f'"{front_text_elem.text or ""}"'
                         learned_timestamp = front_side.get('LearnedTimestamp', 0)
                     
                     # Extract reverse side details with logging
@@ -119,7 +119,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
                     if reverse_side is not None:
                         back_text_elem = reverse_side.find('Text')
                         if back_text_elem is not None:
-                            back_text = back_text_elem.text or ''
+                            back_text = f'"{back_text_elem.text or ""}"'
 
                     # Create simple sequential card identifier
                     card_id = f'card{total_cards + 1}'
