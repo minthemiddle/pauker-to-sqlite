@@ -248,6 +248,7 @@ Please create a dialogue that follows these rules exactly using these vocabulary
     # Generate static HTML
     import html
     import re
+    import os
 
     def process_cloze(match):
         full_text = match.group(0)
@@ -356,6 +357,10 @@ Please create a dialogue that follows these rules exactly using these vocabulary
         f.write(html_template)
     
     logger.info(f"Successfully created example story with ID: {example_id} in {html_filename}")
+    
+    # Open the HTML file with the default web browser
+    os.system(f'open {html_filename}')
+    
     return story
 
 if __name__ == '__main__':
