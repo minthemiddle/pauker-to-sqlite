@@ -161,8 +161,6 @@ def convert_pauker_to_sqlite(input_file, output, example):
         logger.error(traceback.format_exc())
         raise
 
-import os
-
 def generate_example_story(conn, batch_index):
     api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
