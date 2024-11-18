@@ -1,13 +1,12 @@
+import os
 import click
 import gzip
 import xml.etree.ElementTree as ET
 import sqlite3
 import uuid
-import os
 import logging
 import traceback
 from openai import OpenAI
-import os  # Ensure this is imported
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
