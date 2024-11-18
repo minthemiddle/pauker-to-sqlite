@@ -6,6 +6,8 @@ import sqlite3
 import uuid
 import logging
 import traceback
+import html
+import re
 from openai import OpenAI
 
 # Configure logging
@@ -244,9 +246,6 @@ Please create a dialogue that follows these rules exactly using these vocabulary
     conn.commit()
     
     # Generate static HTML
-    import html
-    import re
-    import os
 
     def process_cloze(match):
         full_text = match.group(0)
