@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 @click.option('-o', '--output', 'output', type=click.Path(), required=True, help='Output SQLite database file')
 @click.option('--example', is_flag=True, help='Generate an example story using vocabulary from cards not in batch 1')
 @click.option('--model', type=click.Choice(['openai', 'gemini'], case_sensitive=False), default='openai', help='Specify the model to use for generating the example story')
-def convert_pauker_to_sqlite(input_file, output, example):
+def convert_pauker_to_sqlite(input_file, output, example, model):
     """
     Convert Pauker .pau.gz flashcard file to SQLite database
     """
