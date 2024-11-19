@@ -284,6 +284,9 @@ Items:
             # Fallback if split fails
             return full_text
 
+        # Ensure dialog parts start on new lines
+        return re.sub(r'(A:|B:)', r'<br>\1', full_text)
+
     script_content = """
     <script>
         let clozeElements = [];
@@ -367,7 +370,7 @@ Items:
 </head>
 <body>
     <h1>Latest Example</h1>
-    <p>{re.sub(r'\[.*?\]\(.*?\)', process_cloze, story)}</p>
+    <p>{re.sub(r'\[.*?\]\(.*?\)', process_cloze, story).replace('<br>', '<br>\n')}</p>
 </body>
 </html>"""
 
