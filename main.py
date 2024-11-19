@@ -284,8 +284,9 @@ Items:
             # Fallback if split fails
             return full_text
 
-        # Ensure dialog parts start on new lines
-        return re.sub(r'(A:|B:)', r'<br><span>\1', full_text) + '</span>'
+    # Ensure dialog parts start on new lines
+    story_with_line_breaks = re.sub(r'^(A:|B:)', r'<br>\1', story, flags=re.MULTILINE)
+    story_with_clozes = re.sub(r'\[.*?\]\(.*?\)', process_cloze, story_with_line_breaks)
 
     script_content = """
     <script>
@@ -370,7 +371,7 @@ Items:
 </head>
 <body>
     <h1>Latest Example</h1>
-    <div>{re.sub(r'\[.*?\]\(.*?\)', process_cloze, story).replace('<br>', '<br>\n')}</div>
+    <div>{story_with_clozes}</div>
 </body>
 </html>"""
 
