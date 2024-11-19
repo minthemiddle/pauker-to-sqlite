@@ -285,7 +285,7 @@ Items:
             return full_text
 
         # Ensure dialog parts start on new lines
-        return re.sub(r'(A:|B:)', r'<br>\1', full_text)
+        return re.sub(r'(A:|B:)', r'<br><span>\1', full_text) + '</span>'
 
     script_content = """
     <script>
@@ -370,7 +370,7 @@ Items:
 </head>
 <body>
     <h1>Latest Example</h1>
-    <p>{re.sub(r'\[.*?\]\(.*?\)', process_cloze, story).replace('<br>', '<br>\n')}</p>
+    <div>{re.sub(r'\[.*?\]\(.*?\)', process_cloze, story).replace('<br>', '<br>\n')}</div>
 </body>
 </html>"""
 
