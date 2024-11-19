@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 @click.option('-i', '--input', 'input_file', type=click.Path(exists=True), required=True, help='Input Pauker .pau.gz file')
 @click.option('-o', '--output', 'output', type=click.Path(), required=True, help='Output SQLite database file')
 @click.option('--example', is_flag=True, help='Generate an example story using vocabulary from cards not in batch 1')
+@click.option('--model', type=click.Choice(['openai', 'gemini'], case_sensitive=False), default='openai', help='Specify the model to use for generating the example story')
 def convert_pauker_to_sqlite(input_file, output, example):
     """
     Convert Pauker .pau.gz flashcard file to SQLite database
@@ -142,7 +143,7 @@ def convert_pauker_to_sqlite(input_file, output, example):
                         logger.error(traceback.format_exc())
 
             if example:
-                story = generate_example_story(conn, batch_index=1)  # Default to batch 1
+                story = generate_example_story(conn, batch_index=1, model=model)  # Default to batch 1
                 if story is None:
                     logger.warning("Skipping example story generation due to missing API key")
 
@@ -163,16 +164,26 @@ def convert_pauker_to_sqlite(input_file, output, example):
         logger.error(traceback.format_exc())
         raise
 
-def generate_example_story(conn, batch_index):
-    api_key = os.environ.get('GEMINI_API_KEY')
-    if not api_key:
-        logger.error("GEMINI_API_KEY environment variable not set")
-        return None
+def generate_example_story(conn, batch_index, model):
+    if model.lower() == 'gemini':
+        api_key = os.environ.get('GEMINI_API_KEY')
+        if not api_key:
+            logger.error("GEMINI_API_KEY environment variable not set")
+            return None
 
-    client = OpenAI(
-        api_key=api_key,
-        base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
-    )
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+        )
+    else:
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            logger.error("OPENAI_API_KEY environment variable not set")
+            return None
+
+        client = OpenAI(
+            api_key=api_key
+        )
 
     # Query database for cards not in batch 1, sorted by learned_timestamp
     cursor = conn.cursor()
@@ -226,14 +237,24 @@ Please create a dialogue that follows these rules exactly using these vocabulary
 {';'.join(vocab_list)}
 """
     
-    response = client.chat.completions.create(
-        model="gemini-1.5-pro",
-        n=1,
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt}
-        ]
-    )
+    if model.lower() == 'gemini':
+        response = client.chat.completions.create(
+            model="gemini-1.5-pro",
+            n=1,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+    else:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            n=1,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
+        )
 
     story = response.choices[0].message.content
     
