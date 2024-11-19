@@ -203,37 +203,41 @@ def generate_example_story(conn, batch_index, model):
 
     prompt = f"""
 Create a natural dialogue between two people (A and B) following these strict rules:
-    
-1. Cloze Format Rules:
-- Each vocabulary item (word or phrase) MUST be converted to a cloze using exactly this format: [vocabulary item](brief definition)
-- Example: [chip on his shoulder](resentful attitude) or [take into account](consider)  
-- The cloze replacement happens in code!
-- Only the provided vocabulary items should be clozes
+1. Input Vocabulary Format:
+- Items to be provided in format: phrase/word,definition;phrase/word,definition
+- Vocabulary items will serve as INSPIRATION for unique dialogue content
+
+2. Cloze Format Rules:
+- Each vocabulary item MUST be converted to a cloze using this format: [vocabulary item](brief definition)
+- Cloze replacement happens dynamically in the dialogue
+- Only provided vocabulary items should become clozes
 - Each cloze definition must be 1-4 words maximum
-- Keep the original form of the vocabulary item exactly as provided
+- Preserve the original form of the vocabulary item exactly
 
-2. Dialogue Requirements:
+3. Dialogue Creation Guidelines:
 - Begin each line with 'A:' or 'B:'
-- Keep the conversation natural and logical
-- Use ALL provided vocabulary items exactly once
-- Distribute vocabulary items randomly throughout the dialogue
-- IMPORTANT: Create entirely new contexts and sentences - DO NOT copy or adapt any example sentences from the input
-- Each vocabulary item must be used in a completely different context than shown in any example
+- Maintain natural, logical conversation flow
+- USE ALL provided vocabulary items exactly once
+- Distribute vocabulary items RANDOMLY throughout dialogue
+- CRUCIAL REQUIREMENT: Create ENTIRELY NEW contexts and examples
+    - NO direct repetition of input scenarios
+    - RADICAL transformation of original context
+    - Generate completely original dialogue scenarios
+- Avoid ANY literal translation or direct adaptation of input examples
 
-3. Example Format:
-A: He has a [chip on his shoulder](resentful attitude) about not getting that promotion.
-B: Yes, but he needs to [take into account](consider) that he's still quite new.
+4. Creativity Mandate:
+- Invent fresh narrative contexts
+- Demonstrate linguistic creativity
+- Ensure vocabulary items feel organic and spontaneous in use
 
-4. Input Vocabulary Format:
-- Items are provided in format: phrase/word,definition;phrase/word,definition
-- Example: "Progressive Rock had its [h…] in the 1970s.","heyday"
-- Use the provided items but create your own brief definitions for the clozes
+Example Transformation Principle:
+Input: "This milk smells like it has gone off."
+FORBIDDEN: Repeating milk/spoilage scenario
+REQUIRED: Completely different context (e.g., discussing a bizarre work situation, personal anecdote, etc.)
 
-For your example about "heyday":
-INSTEAD OF: "Progressive Rock had its heyday in the 1970s"
-CREATE NEW CONTEXT: "The local diner is experiencing its [heyday](peak period) with the new management"
+Objective: Generate a dialogue that feels natural, surprising, and completely divorced from the original input while faithfully incorporating all provided vocabulary items.
 
-Please create a dialogue that follows these rules exactly using these vocabulary items:
+Items:
 {';'.join(vocab_list)}
 """
     
