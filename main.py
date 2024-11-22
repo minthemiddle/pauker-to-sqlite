@@ -372,6 +372,12 @@ Items:
             background-color: hsl(56, 100%, 80%);
             padding: 5px
         }}
+        
+        .hint {{
+            color: #999;
+            font-size: 0.9em;
+            margin-left: 0.5em;
+        }}
     </style>
 {script_content}
 </head>
