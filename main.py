@@ -279,7 +279,7 @@ Items:
             content, hint = full_text[1:-1].split('](')
             escaped_content = html.escape(content)
             escaped_hint = html.escape(hint)
-            return f'<span class="cloze" onclick="revealCloze(this)" data-original="{escaped_content}" title="{escaped_hint}">[…]</span>'
+            return f'<span class="cloze" onclick="revealCloze(this)" data-original="{escaped_content}" title="{escaped_hint}">[…]</span><span class="hint">({escaped_hint})</span>'
         except ValueError:
             # Fallback if split fails
             return full_text
