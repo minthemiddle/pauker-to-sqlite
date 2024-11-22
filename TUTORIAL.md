@@ -8,6 +8,16 @@ The `--example` feature in our script generates a natural dialogue using vocabul
 
 The Python function `generate_example_story` is responsible for creating the example story. It queries the SQLite database for vocabulary items not in batch 1, constructs a prompt for the AI model, and then processes the response to create a cloze-formatted story.
 
+### Detailed Explanation of `generate_example_story`
+
+1. **Database Query**: The function starts by querying the SQLite database for flashcards that are not in batch 1. This is done using a SQL query that selects the `front_text` and `back_text` from the `cards` table where the `batch_number` is not equal to 1.
+
+2. **Prompt Construction**: The selected vocabulary items are then used to construct a prompt for the AI model. This prompt instructs the model to create a natural dialogue between two people (A and B) using the provided vocabulary items.
+
+3. **AI Model Interaction**: The function calls the AI model to generate a story based on the constructed prompt. The response from the AI model is then processed to extract the generated story.
+
+4. **Database Insertion**: Finally, the generated story is inserted into the `examples` table in the SQLite database for future reference.
+
 ### Example Python Code Snippet
 
 ```python
@@ -60,6 +70,14 @@ def generate_example_story(conn, batch_index, model):
 ## HTML Structure: Displaying the Example Story
 
 The generated story is embedded into an HTML template. This template includes styles and scripts to handle the cloze interactions.
+
+### Detailed Explanation of HTML Structure
+
+1. **Styles**: The CSS styles define how the cloze text and revealed text will appear. The `.cloze` class styles the placeholder text, and the `.revealed` class styles the text once it has been revealed.
+
+2. **JavaScript Initialization**: The JavaScript code initializes the cloze elements and sets up event listeners for keydown events to handle the interaction.
+
+3. **Cloze Interaction**: The `revealNextCloze` function handles the interaction for revealing the next cloze element when the right arrow key is pressed. The `revealCloze` function handles the interaction for revealing a specific cloze element when clicked.
 
 ### Example HTML Code Snippet
 
@@ -148,6 +166,14 @@ The generated story is embedded into an HTML template. This template includes st
 ## JavaScript Functionality: Revealing Clozes
 
 The JavaScript code handles the interaction for revealing the clozes. When a user clicks on a cloze or presses the right arrow key, the original text is gradually revealed.
+
+### Detailed Explanation of JavaScript Functions
+
+1. **Initialization**: The `DOMContentLoaded` event listener initializes the cloze elements and sets up the keydown event listener for the right arrow key.
+
+2. **Revealing Clozes**: The `revealNextCloze` function reveals the next cloze element in sequence. It checks the current state of the cloze element and updates its content and class accordingly.
+
+3. **Revealing Specific Cloze**: The `revealCloze` function handles the interaction for revealing a specific cloze element when clicked. It follows a similar process to `revealNextCloze` but operates on a specific element.
 
 ### Example JavaScript Code Snippet
 
