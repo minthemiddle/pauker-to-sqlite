@@ -361,16 +361,21 @@ Items:
             padding: 1rem;
             font-family: Arial, sans-serif;
         }}
+        
+        br {{
+            margin-bottom: 16px;
+        }}
+            
 
         .revealed {{
             font-style: italic;
-            color: #666;
+            background-color: hsl(56, 100%, 80%);
+            padding: 5px
         }}
     </style>
 {script_content}
 </head>
 <body>
-    <h1>Latest Example</h1>
     <div>{story_with_clozes}</div>
 </body>
 </html>"""
