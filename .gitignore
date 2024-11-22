@@ -4,3 +4,4 @@
 *.pau.gz
 *.sqlite
 out
+.DS_Store
