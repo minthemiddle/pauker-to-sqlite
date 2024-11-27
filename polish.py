@@ -272,7 +272,7 @@ Items:
         full_text = match.group(0)
         try:
             # Extract the Polish translation from between square brackets
-            polish_translation = full_text[1:-1].split(']')[0]
+            polish_translation = full_text[full_text.index('[')+1:full_text.index(']')]
             escaped_content = html.escape(polish_translation)
             return f'<span class="cloze" onclick="revealCloze(this)" data-original="{escaped_content}">[…]</span>'
         except (ValueError, IndexError):
