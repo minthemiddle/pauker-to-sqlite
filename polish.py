@@ -271,12 +271,12 @@ Items:
     def process_cloze(match):
         full_text = match.group(0)
         try:
-            content, hint = full_text[1:-1].split('](')
-            escaped_content = html.escape(content)
-            escaped_hint = html.escape(hint)
-            return f'<span class="cloze" onclick="revealCloze(this)" data-original="{escaped_content}" title="{escaped_hint}">[…]</span><span class="hint">({escaped_hint})</span>'
-        except ValueError:
-            # Fallback if split fails
+            # Extract the Polish translation from between square brackets
+            polish_translation = full_text[1:-1].split(']')[0]
+            escaped_content = html.escape(polish_translation)
+            return f'<span class="cloze" onclick="revealCloze(this)" data-original="{escaped_content}">[…]</span>'
+        except (ValueError, IndexError):
+            # Fallback if parsing fails
             return full_text
 
     # Ensure dialog parts start on new lines
@@ -315,9 +315,9 @@ Items:
                 currentElement.classList.remove("cloze");
                 currentElement.classList.add("revealed");
                 currentElement.setAttribute('data-revealed', 'full');
+                
                 // Move to next cloze
                 currentClozeIndex = (currentClozeIndex + 1) % clozeElements.length;
-                revealNextCloze();
             }
         }
 
