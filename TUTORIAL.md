@@ -1,8 +1,12 @@
+---
+date_updated: "2024-11-22"
+---
+
 # Tutorial: How the `--example` Feature Works in the Interplay of HTML, JavaScript, and Python
 
 ## Overview
 
-The `--example` feature in our script generates a natural dialogue using vocabulary from flashcards not in batch 1. This dialogue is then transformed into a cloze text format, where certain words or phrases are replaced with placeholders. The user can interact with these placeholders to reveal the original text. This feature involves Python for generating the story, HTML for structuring the content, and JavaScript for the interactive functionality.
+The `--example` feature in our script generates a natural dialogue using vocabulary from flashcards that are in learning process (i.e. not on the unlearned pile). This dialogue is then transformed into a cloze text format, where certain words or phrases are replaced with placeholders. The user can interact with these placeholders to reveal the original text. This feature involves Python for generating the story, HTML for structuring the content, and JavaScript for the interactive functionality.
 
 ## Python Code: Generating the Example Story
 

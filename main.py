@@ -204,7 +204,8 @@ def generate_example_story(conn, batch_index, model):
     prompt = f"""
 Create a natural dialogue between two people (A and B) following these strict rules:
 1. Input Vocabulary Format:
-- Items to be provided in format: phrase/word,definition;phrase/word,definition
+- Items to be provided in format (front/back side): Sentence with clozed phrase/word in square brackets,definition for cloze in round bracket;Sentence with clozed phrase/word in square brackets,definition for cloze in round bracket
+- Example (2 cards): "His [w…] have always been critical of modern scientific research. (academic criticism)","worldview";"I'm searching for a [l…] to help me understand the hidden meanings in this poem. (book or website)","lexicon"
 - Vocabulary items will serve as INSPIRATION for unique dialogue content
 
 2. Cloze Format Rules:
@@ -228,6 +229,7 @@ Create a natural dialogue between two people (A and B) following these strict ru
 4. Creativity Mandate:
 - Invent fresh narrative contexts
 - Demonstrate linguistic creativity
+- Demonstrate expert knowledge on the right useage of idioms (i.e. with the right meaning)
 - Ensure vocabulary items feel organic and spontaneous in use
 
 Example Transformation Principle:
@@ -246,16 +248,16 @@ Items:
             model="gemini-1.5-pro",
             n=1,
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "You are an expert in dialog creation. You can tell great, consistent stories that make sense. You are great at using the right idiom at the right time with the right meaning for the given context."},
                 {"role": "user", "content": prompt}
             ]
         )
     else:
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             n=1,
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "You are an expert in dialog creation. You can tell great, consistent stories that make sense. You are great at using the right idiom at the right time with the right meaning for the given context."},
                 {"role": "user", "content": prompt}
             ]
         )
@@ -345,7 +347,7 @@ Items:
     html_template = f"""<!DOCTYPE html>
 <html>
 <head>
-    <title>Cloze Text Example</title>
+    <title>Language Exercise</title>
     <style>
         .cloze {{
             cursor: pointer;
@@ -358,6 +360,7 @@ Items:
             font-size: 21px;
             max-width: 32rem;
             line-height: 1.5;
+            margin-top: -25px;
             padding: 1rem;
             font-family: Arial, sans-serif;
         }}
