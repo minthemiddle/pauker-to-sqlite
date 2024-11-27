@@ -9,6 +9,7 @@ import traceback
 import html
 import re
 from openai import OpenAI
+from pydantic import BaseModel, Field
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -164,6 +165,14 @@ def convert_pauker_to_sqlite(input_file, output, example, model):
         logger.error(traceback.format_exc())
         raise
 
+class DialogLine(BaseModel):
+    speaker: str = Field(..., description="Speaker identifier (A or B)")
+    german: str = Field(..., description="German sentence")
+    polish: str = Field(..., description="Polish translation")
+
+class Dialog(BaseModel):
+    lines: list[DialogLine] = Field(..., description="List of dialog lines")
+
 def generate_example_story(conn, batch_index, model):
     if model.lower() == 'gemini':
         api_key = os.environ.get('GEMINI_API_KEY')
@@ -237,25 +246,28 @@ Items:
 """
     
     if model.lower() == 'gemini':
-        response = client.chat.completions.create(
+        response = client.beta.chat.completions.parse(
             model="gemini-1.5-pro",
-            n=1,
             messages=[
-                {"role": "system", "content": "You are an expert in dialog creation for A1 beginner level learners of Polish. You can tell great, consistent stories that make sense. You are great at using the right idiom at the right time with the right meaning for the given context."},
+                {"role": "system", "content": "You are an expert in dialog creation for A1 beginner level learners of Polish. Create a dialog with a clear structure."},
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            response_format=Dialog,
         )
     else:
-        response = client.chat.completions.create(
+        response = client.beta.chat.completions.parse(
             model="gpt-4o",
-            n=1,
             messages=[
-                {"role": "system", "content": "You are an expert in dialog creation for A1 beginner level learners of Polish. You can tell great, consistent stories that make sense. You are great at using the right idiom at the right time with the right meaning for the given context."},
+                {"role": "system", "content": "You are an expert in dialog creation for A1 beginner level learners of Polish. Create a dialog with a clear structure."},
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            response_format=Dialog,
         )
 
-    story = response.choices[0].message.content
+    dialog = response.choices[0].message.parsed
+    
+    # Convert structured dialog to text format
+    story = "\n".join([f"{line.speaker}: {line.german} [{line.polish}]" for line in dialog.lines])
     
     # Insert story into examples table
     cursor = conn.cursor()
@@ -281,7 +293,7 @@ Items:
 
     # Ensure dialog parts start on new lines
     story_with_line_breaks = re.sub(r'^(A:|B:)', r'<br>\1', story, flags=re.MULTILINE)
-    story_with_clozes = re.sub(r'\[.*?\]\(.*?\)', process_cloze, story_with_line_breaks)
+    story_with_clozes = re.sub(r'\[.*?\]', process_cloze, story_with_line_breaks)
 
     script_content = """
     <script>
